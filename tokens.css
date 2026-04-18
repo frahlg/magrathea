@@ -154,6 +154,14 @@ body { margin: 0; }
   border-radius: 2px;
 }
 
+/* ── Prevent FOUC ·────────────────────────────────────────────
+ * Hide custom elements until they upgrade (customElements.define).
+ * The short flash of unstyled inline text is gone; page becomes
+ * visible in one frame when the module finishes registering. */
+:not(:defined) {
+  visibility: hidden;
+}
+
 /* ── View Transitions · kill the default crossfade.
  * Components opt in explicitly via view-transition-name. */
 ::view-transition-old(root),
