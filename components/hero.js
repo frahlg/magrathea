@@ -11,6 +11,11 @@ class Hero extends Mag {
     }
     :host([compact]) { padding: var(--mag-space-8) var(--mag-space-5); }
 
+    @media (max-width: 48rem) {
+      :host           { padding: var(--mag-space-8) var(--mag-space-4); }
+      :host([compact]) { padding: var(--mag-space-7) var(--mag-space-4); }
+    }
+
     :host([bleed]) {
       background:
         radial-gradient(

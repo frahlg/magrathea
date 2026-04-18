@@ -10,6 +10,12 @@ class Section extends Mag {
     :host([compact]) { padding: var(--mag-space-7) var(--mag-space-5); }
     :host([flush])   { padding: 0 var(--mag-space-5); }
 
+    @media (max-width: 48rem) {
+      :host           { padding: var(--mag-space-7) var(--mag-space-4); }
+      :host([compact]) { padding: var(--mag-space-6) var(--mag-space-4); }
+      :host([flush])   { padding: 0 var(--mag-space-4); }
+    }
+
     :host([tone="sunken"]) { background: var(--mag-bg-sunken); }
     :host([tone="accent"]) { background: var(--mag-accent-soft); }
     :host([tone="ink"]) {

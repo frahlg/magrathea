@@ -23,7 +23,15 @@ class Grid extends Mag {
     :host([cols="4"]) { grid-template-columns: repeat(4, 1fr); }
     :host([cols="6"]) { grid-template-columns: repeat(6, 1fr); }
 
-    @media (max-width: 48rem) {
+    /* Tablet: collapse dense layouts to 2 cols. */
+    @media (max-width: 64rem) {
+      :host([cols="3"]),
+      :host([cols="4"]),
+      :host([cols="6"]) { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Mobile: everything stacks. */
+    @media (max-width: 40rem) {
       :host([cols]) { grid-template-columns: 1fr; }
     }
   `;
