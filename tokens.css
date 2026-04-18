@@ -1,0 +1,187 @@
+/* Magrathea — design tokens. One file, zero deps.
+ * Named for the planet where Slartibartfast designs coastlines.
+ *
+ * Uses light-dark() so one token declaration covers both themes.
+ * Manual override: set data-theme="light" or "dark" on <html>. */
+
+:root {
+  color-scheme: light dark;
+}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"]  { color-scheme: dark;  }
+
+:root {
+  /* ── Color (OKLCH · light-dark() · one line per token) ──────── */
+
+  --mag-bg:            light-dark(oklch(98%   0.006 85), oklch(16%   0.01  85));
+  --mag-bg-sunken:     light-dark(oklch(96.5% 0.008 85), oklch(13%   0.012 85));
+  --mag-surface:       light-dark(oklch(100%  0     0),  oklch(20%   0.012 85));
+  --mag-surface-muted: light-dark(oklch(96%   0.008 85), oklch(23%   0.012 85));
+
+  --mag-border:        light-dark(oklch(88%   0.008 85), oklch(30%   0.012 85));
+  --mag-border-subtle: light-dark(oklch(93%   0.006 85), oklch(25%   0.01  85));
+  --mag-border-strong: light-dark(oklch(78%   0.01  85), oklch(42%   0.014 85));
+
+  --mag-ink:           light-dark(oklch(18%   0.012 85), oklch(96%   0.006 85));
+  --mag-ink-muted:     light-dark(oklch(45%   0.01  85), oklch(72%   0.01  85));
+  --mag-ink-subtle:    light-dark(oklch(60%   0.008 85), oklch(55%   0.01  85));
+  --mag-ink-inverse:   light-dark(oklch(98%   0.004 85), oklch(18%   0.012 85));
+
+  --mag-accent:        light-dark(oklch(72%   0.14  75), oklch(78%   0.13  75));
+  --mag-accent-hover:  light-dark(oklch(66%   0.15  70), oklch(84%   0.12  78));
+  --mag-accent-soft:   light-dark(oklch(94%   0.04  80), oklch(30%   0.08  75));
+  --mag-accent-ink:    light-dark(oklch(28%   0.08  70), oklch(92%   0.08  80));
+
+  --mag-success:       oklch(68% 0.14 155);
+  --mag-danger:        oklch(62% 0.18 25);
+  --mag-focus:         light-dark(oklch(60% 0.18 250), oklch(75% 0.18 250));
+
+  /* ── Typography — system stack, no webfont, no FOUC ─────────── */
+
+  --mag-font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+                   system-ui, sans-serif;
+  --mag-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo,
+                   Consolas, monospace;
+
+  /* Fluid scale — sizes scale smoothly with viewport. */
+  --mag-text-xs:   0.75rem;
+  --mag-text-sm:   0.875rem;
+  --mag-text-base: 1rem;
+  --mag-text-lg:   1.125rem;
+  --mag-text-xl:   1.25rem;
+  --mag-text-2xl:  clamp(1.5rem,   1.2rem + 0.8vw, 1.75rem);
+  --mag-text-3xl:  clamp(1.875rem, 1.5rem + 1.2vw, 2.25rem);
+  --mag-text-4xl:  clamp(2.25rem,  1.7rem + 2vw,   3rem);
+  --mag-text-5xl:  clamp(2.75rem,  1.8rem + 3.5vw, 4rem);
+  --mag-text-6xl:  clamp(3.25rem,  1.8rem + 5.5vw, 5.5rem);
+  --mag-text-7xl:  clamp(4rem,     2rem + 8vw,     7.5rem);
+
+  --mag-leading-tight:   1.02;
+  --mag-leading-snug:    1.15;
+  --mag-leading-normal:  1.5;
+  --mag-leading-relaxed: 1.65;
+
+  --mag-tracking-tight:  -0.025em;
+  --mag-tracking-snug:   -0.01em;
+  --mag-tracking-normal: 0;
+  --mag-tracking-wide:   0.04em;
+  --mag-tracking-wider:  0.12em;
+
+  --mag-weight-regular: 400;
+  --mag-weight-medium:  500;
+  --mag-weight-semi:    600;
+  --mag-weight-bold:    700;
+  --mag-weight-black:   800;
+
+  /* ── Spacing · 4px base, modular ────────────────────────────── */
+  --mag-space-0:  0;
+  --mag-space-1:  0.25rem;
+  --mag-space-2:  0.5rem;
+  --mag-space-3:  0.75rem;
+  --mag-space-4:  1rem;
+  --mag-space-5:  1.5rem;
+  --mag-space-6:  2rem;
+  --mag-space-7:  2.5rem;
+  --mag-space-8:  4rem;
+  --mag-space-9:  6rem;
+  --mag-space-10: 10rem;
+
+  /* ── Radii ──────────────────────────────────────────────────── */
+  --mag-radius-xs:   6px;
+  --mag-radius-sm:   10px;
+  --mag-radius-md:   14px;
+  --mag-radius-lg:   22px;
+  --mag-radius-xl:   32px;
+  --mag-radius-pill: 9999px;
+
+  /* ── Shadow — warm-tinted ───────────────────────────────────── */
+  --mag-shadow-xs: 0 1px 2px oklch(15% 0.02 85 / 0.05);
+  --mag-shadow-sm: 0 1px 3px oklch(15% 0.02 85 / 0.06),
+                   0 1px 2px oklch(15% 0.02 85 / 0.04);
+  --mag-shadow-md: 0 4px 12px oklch(15% 0.02 85 / 0.08),
+                   0 2px 4px  oklch(15% 0.02 85 / 0.05);
+  --mag-shadow-lg: 0 16px 40px oklch(15% 0.02 85 / 0.10),
+                   0 6px 12px  oklch(15% 0.02 85 / 0.06);
+  --mag-shadow-xl: 0 32px 64px oklch(15% 0.02 85 / 0.14),
+                   0 12px 24px oklch(15% 0.02 85 / 0.08);
+
+  /* ── Motion ─────────────────────────────────────────────────── */
+  --mag-dur-fast: 120ms;
+  --mag-dur:      180ms;
+  --mag-dur-slow: 320ms;
+  --mag-ease:     cubic-bezier(0.2, 0.8, 0.2, 1);
+  --mag-ease-in:  cubic-bezier(0.5, 0, 0.75, 0);
+  --mag-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --mag-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Layers, layout ─────────────────────────────────────────── */
+  --mag-z-base:    0;
+  --mag-z-raised:  10;
+  --mag-z-overlay: 100;
+  --mag-z-modal:   1000;
+  --mag-z-toast:   10000;
+
+  --mag-max-content: 72rem;
+  --mag-max-prose:   38rem;
+}
+
+/* ── Page defaults ──────────────────────────────────────────── */
+html {
+  background: var(--mag-bg);
+  color: var(--mag-ink);
+  font-family: var(--mag-font-sans);
+  font-size: 16px;
+  line-height: var(--mag-leading-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  accent-color: var(--mag-accent);
+  /* Smooth theme swap when tokens change (unless a View Transition is active). */
+  transition: background-color var(--mag-dur) var(--mag-ease);
+}
+
+body { margin: 0; }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+::selection {
+  background: var(--mag-accent-soft);
+  color: var(--mag-accent-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--mag-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── View Transitions · kill the default crossfade.
+ * Components opt in explicitly via view-transition-name. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* ── Scroll-driven reveal · opt-in via data-reveal on any block ──
+ * <section data-reveal>…</section>
+ * No JS. The browser runs the animation against the scroll timeline. */
+@supports (animation-timeline: view()) {
+  [data-reveal] {
+    animation: mag-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 25%;
+  }
+  @keyframes mag-reveal {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+}
+
+/* ── Respect motion preferences ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-timeline: none !important;
+  }
+}

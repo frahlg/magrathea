@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Magrathea — a design system for the AI era</title>
+  <meta name="description" content="The web is broken. We removed the broken parts. Zero deps. Zero build. Zero npm. 7kB gzipped.">
+
+  <link rel="stylesheet" href="tokens.css">
+  <script type="module" src="components/index.js"></script>
+
+  <script type="speculationrules">
+  { "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+  </script>
+
+  <style>
+    /* Page-level layout only. Components carry their own styles. */
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      max-width: var(--mag-max-content);
+      margin: 0 auto;
+      width: 100%;
+      padding: var(--mag-space-5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--mag-space-4);
+    }
+    .logo {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      font-size: var(--mag-text-lg);
+      color: var(--mag-ink);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: var(--mag-space-2);
+    }
+    .logo::before {
+      content: "";
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, var(--mag-accent) 0%, var(--mag-accent-hover) 80%);
+      box-shadow: 0 0 12px color-mix(in oklch, var(--mag-accent) 40%, transparent);
+    }
+    nav a {
+      color: var(--mag-ink-muted);
+      text-decoration: none;
+      font-size: var(--mag-text-sm);
+      font-weight: 500;
+      transition: color var(--mag-dur) var(--mag-ease);
+    }
+    nav a:hover { color: var(--mag-ink); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--mag-space-5);
+    }
+    @media (max-width: 40rem) {
+      .nav-links a { display: none; }
+    }
+
+    footer {
+      padding: var(--mag-space-6) var(--mag-space-5);
+      max-width: var(--mag-max-content);
+      margin: 0 auto;
+      width: 100%;
+      color: var(--mag-ink-subtle);
+      font-size: var(--mag-text-sm);
+      border-top: 1px solid var(--mag-border-subtle);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--mag-space-4);
+      margin-top: auto;
+    }
+
+    /* A giant, confident statement. Set in the page, not a component. */
+    .manifesto-num {
+      font-family: var(--mag-font-mono);
+      font-size: var(--mag-text-sm);
+      font-weight: var(--mag-weight-medium);
+      color: var(--mag-accent);
+      letter-spacing: 0;
+      display: block;
+      margin-bottom: var(--mag-space-2);
+    }
+    .pillar {
+      padding: var(--mag-space-5) 0;
+      border-top: 1px solid var(--mag-border-subtle);
+    }
+    .pillar:first-child { border-top: 0; padding-top: 0; }
+
+    .metric {
+      font-size: var(--mag-text-6xl);
+      font-weight: var(--mag-weight-bold);
+      letter-spacing: var(--mag-tracking-tight);
+      line-height: 1;
+      color: var(--mag-ink);
+      font-variant-numeric: tabular-nums;
+      display: block;
+    }
+    .metric-accent { color: var(--mag-accent); }
+
+    .strike {
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
+      color: var(--mag-ink-subtle);
+    }
+
+    pre {
+      background: oklch(14% 0.008 85);
+      color: oklch(95% 0.006 85);
+      padding: var(--mag-space-5);
+      border-radius: var(--mag-radius-md);
+      overflow-x: auto;
+      font-family: var(--mag-font-mono);
+      font-size: var(--mag-text-sm);
+      line-height: 1.65;
+      margin: 0;
+      border: 1px solid color-mix(in oklch, white 6%, transparent);
+    }
+    code {
+      font-family: var(--mag-font-mono);
+      font-size: 0.92em;
+      background: var(--mag-surface-muted);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+    }
+    pre code { background: none; padding: 0; }
+    .tk-tag { color: oklch(82% 0.15 80); }
+    .tk-key { color: oklch(78% 0.1 220); }
+    .tk-str { color: oklch(75% 0.12 155); }
+    .tk-mut { color: oklch(55% 0.01 85); }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background: var(--mag-border-subtle);
+      margin: var(--mag-space-1) 0;
+    }
+
+    /* Anchor offset for smooth scroll nav. */
+    html { scroll-behavior: smooth; }
+    :target { scroll-margin-top: var(--mag-space-6); }
+
+    /* Tiny in-page toast. No component needed — just DOM + @starting-style. */
+    #toast {
+      position: fixed;
+      bottom: var(--mag-space-5);
+      right: var(--mag-space-5);
+      z-index: var(--mag-z-toast);
+      display: flex;
+      flex-direction: column;
+      gap: var(--mag-space-2);
+      pointer-events: none;
+    }
+    #toast .t {
+      background: oklch(16% 0.01 85);
+      color: oklch(96% 0.006 85);
+      padding: 0.7rem 1rem;
+      border-radius: var(--mag-radius-md);
+      box-shadow: var(--mag-shadow-lg);
+      font-size: var(--mag-text-sm);
+      font-weight: var(--mag-weight-medium);
+      opacity: 1;
+      transform: translateX(0);
+      transition:
+        opacity var(--mag-dur-slow) var(--mag-ease),
+        transform var(--mag-dur-slow) var(--mag-ease-spring);
+    }
+    @starting-style {
+      #toast .t { opacity: 0; transform: translateX(24px); }
+    }
+    #toast .t.leaving { opacity: 0; transform: translateX(24px); }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a href="#" class="logo">Magrathea</a>
+    <div class="nav-links">
+      <a href="#manifesto">Manifesto</a>
+      <a href="#speed">Speed</a>
+      <a href="#components">Components</a>
+      <a href="#install">Install</a>
+      <mag-toggle></mag-toggle>
+    </div>
+  </nav>
+
+  <mag-hero bleed>
+    <mag-badge tone="accent" dot>v2 · April 2026</mag-badge>
+    <mag-heading level="1" display>The web is broken.</mag-heading>
+    <mag-text lead>
+      We removed the broken parts.
+      A design system with zero dependencies, zero build step, zero npm.
+      Just web standards — the way the browser intended.
+    </mag-text>
+    <mag-row gap="sm" justify="center" wrap>
+      <mag-button size="lg" data-scroll="#install">Start building</mag-button>
+      <mag-button size="lg" tone="ghost" data-scroll="#manifesto">Read the manifesto ↓</mag-button>
+    </mag-row>
+    <mag-text size="sm" tone="subtle">
+      8&nbsp;kB gzipped JS. 19 components. 0 dependencies. Measured, not estimated.
+    </mag-text>
+  </mag-hero>
+
+  <!-- ═══════════════════════════  THE PROBLEM  ═══════════════════════════ -->
+
+  <mag-section tone="sunken" data-reveal>
+    <mag-grid cols="2" gap="lg">
+      <mag-stack gap="md">
+        <mag-eyebrow tone="accent">The problem</mag-eyebrow>
+        <mag-heading level="2">A button should not require a build pipeline.</mag-heading>
+      </mag-stack>
+      <mag-stack gap="md">
+        <mag-text lead>
+          The typical SaaS page ships 2&nbsp;MB of JavaScript before it paints.
+          38 npm packages to render a rounded rectangle. 14 config files to
+          style it. Slower than the same page built in 2008.
+        </mag-text>
+        <mag-text tone="muted">
+          The web got worse. Magrathea isn't better — it's what's left when
+          you remove what got worse.
+        </mag-text>
+      </mag-stack>
+    </mag-grid>
+  </mag-section>
+
+  <!-- ═══════════════════════════  MANIFESTO  ════════════════════════════ -->
+
+  <mag-section id="manifesto" data-reveal>
+    <mag-stack gap="lg" align="center">
+      <mag-eyebrow tone="accent">First principles</mag-eyebrow>
+      <mag-heading level="2">Seven rules. No exceptions.</mag-heading>
+    </mag-stack>
+
+    <mag-grid cols="2" gap="lg">
+      <div>
+        <div class="pillar">
+          <span class="manifesto-num">01</span>
+          <mag-heading level="4">Physics before code.</mag-heading>
+          <mag-text tone="muted">
+            The browser renders pixels. Everything above is a layer that can rot.
+          </mag-text>
+        </div>
+        <div class="pillar">
+          <span class="manifesto-num">02</span>
+          <mag-heading level="4">No npm.</mag-heading>
+          <mag-text tone="muted">
+            Lockfiles lie. Supply chains die. Every dependency is a promise
+            the author will still care in three years.
+          </mag-text>
+        </div>
+        <div class="pillar">
+          <span class="manifesto-num">03</span>
+          <mag-heading level="4">HTML is the interface.</mag-heading>
+          <mag-text tone="muted">
+            Attributes beat classes. Components beat stylesheets.
+            What you read is what you write.
+          </mag-text>
+        </div>
+        <div class="pillar">
+          <span class="manifesto-num">04</span>
+          <mag-heading level="4">CSS is how pixels get color.</mag-heading>
+          <mag-text tone="muted">
+            Not a framework. Not a methodology. Not a JavaScript problem.
+          </mag-text>
+        </div>
+      </div>
+      <div>
+        <div class="pillar">
+          <span class="manifesto-num">05</span>
+          <mag-heading level="4">JavaScript is a tool, not a religion.</mag-heading>
+          <mag-text tone="muted">
+            Reach for it last. The browser has native popovers, dialogs,
+            form validation, routing, and view transitions now.
+          </mag-text>
+        </div>
+        <div class="pillar">
+          <span class="manifesto-num">06</span>
+          <mag-heading level="4">Web standards outlive companies.</mag-heading>
+          <mag-text tone="muted">
+            Your framework vendor might pivot. The W3C won't. Bet on the
+            browser — it's the one thing that can't be deprecated.
+          </mag-text>
+        </div>
+        <div class="pillar">
+          <span class="manifesto-num">07</span>
+          <mag-heading level="4">Ship what you mean.</mag-heading>
+          <mag-text tone="muted">
+            Every kilobyte costs someone — battery, bandwidth, attention,
+            carbon. Ship less. Mean more.
+          </mag-text>
+        </div>
+        <div class="pillar">
+          <mag-eyebrow>Footnote</mag-eyebrow>
+          <mag-text size="sm" tone="subtle">
+            In the spirit of Dieter Rams' <em>Less, but better</em> and
+            the Swedish principle of <em>lagom</em>: not sparse, just enough.
+          </mag-text>
+        </div>
+      </div>
+    </mag-grid>
+  </mag-section>
+
+  <!-- ═══════════════════════════  THE NUMBERS  ══════════════════════════ -->
+
+  <mag-section id="speed" data-reveal>
+    <mag-stack gap="lg" align="center">
+      <mag-eyebrow tone="accent">The numbers</mag-eyebrow>
+      <mag-heading level="2">Compared to everything else.</mag-heading>
+      <mag-text lead>
+        Real measurements — not marketing. Lower is faster. Zero is faster still.
+      </mag-text>
+    </mag-stack>
+
+    <mag-grid cols="4" gap="md">
+      <mag-card>
+        <mag-stack gap="sm">
+          <mag-eyebrow>JS shipped</mag-eyebrow>
+          <span class="metric metric-accent">8&nbsp;kB</span>
+          <mag-text size="sm" tone="muted">
+            All 19 components, gzipped. <span class="strike">shadcn starter: 170&nbsp;kB</span>.
+            <span class="strike">Next + MUI: 450&nbsp;kB</span>.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+      <mag-card>
+        <mag-stack gap="sm">
+          <mag-eyebrow>Install time</mag-eyebrow>
+          <span class="metric metric-accent">0&nbsp;s</span>
+          <mag-text size="sm" tone="muted">
+            Two &lt;link&gt; tags.
+            <span class="strike">shadcn init: 60&nbsp;s</span>.
+            <span class="strike">Next + MUI: 90&nbsp;s</span>.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+      <mag-card>
+        <mag-stack gap="sm">
+          <mag-eyebrow>First paint</mag-eyebrow>
+          <span class="metric metric-accent">~50&nbsp;ms</span>
+          <mag-text size="sm" tone="muted">
+            No JS to parse before paint.
+            <span class="strike">React hydration: 400&nbsp;ms+</span>.
+            <span class="strike">Heavy SaaS: 1.5&nbsp;s+</span>.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+      <mag-card>
+        <mag-stack gap="sm">
+          <mag-eyebrow>Config files</mag-eyebrow>
+          <span class="metric metric-accent">0</span>
+          <mag-text size="sm" tone="muted">
+            No tsconfig, postcss, webpack, vite, tailwind.config.
+            The config is the code.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+    </mag-grid>
+
+  </mag-section>
+
+  <!-- ═══════════════════════════  WHAT'S NOT HERE  ═══════════════════════ -->
+
+  <mag-section tone="sunken" data-reveal>
+    <mag-stack gap="lg" align="center">
+      <mag-eyebrow tone="accent">What's not here</mag-eyebrow>
+      <mag-heading level="2">Every tool you don't miss.</mag-heading>
+    </mag-stack>
+
+    <mag-grid cols="3" gap="md">
+      <mag-card>
+        <mag-stack gap="xs">
+          <mag-heading level="5"><span class="strike">npm</span></mag-heading>
+          <mag-text tone="muted" size="sm">
+            No <code>package.json</code>. No <code>node_modules</code>. No
+            lockfile. Copy two files, build.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+      <mag-card>
+        <mag-stack gap="xs">
+          <mag-heading level="5"><span class="strike">Bundler</span></mag-heading>
+          <mag-text tone="muted" size="sm">
+            Native ES modules. The browser is the bundler. Save, refresh.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+      <mag-card>
+        <mag-stack gap="xs">
+          <mag-heading level="5"><span class="strike">Framework</span></mag-heading>
+          <mag-text tone="muted" size="sm">
+            Works in React, Svelte, Astro — or nothing.
+            Web components can't be deprecated.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+      <mag-card>
+        <mag-stack gap="xs">
+          <mag-heading level="5"><span class="strike">CSS framework</span></mag-heading>
+          <mag-text tone="muted" size="sm">
+            No Tailwind, no Bootstrap, no BEM. 20 CSS custom properties
+            are the entire design system.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+      <mag-card>
+        <mag-stack gap="xs">
+          <mag-heading level="5"><span class="strike">Webfont</span></mag-heading>
+          <mag-text tone="muted" size="sm">
+            System UI stack. Native feel, zero request, zero FOUC.
+            Add one if you need a brand face.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+      <mag-card>
+        <mag-stack gap="xs">
+          <mag-heading level="5"><span class="strike">Config</span></mag-heading>
+          <mag-text tone="muted" size="sm">
+            No <code>tsconfig</code>, <code>vite.config</code>,
+            <code>tailwind.config</code>. Override tokens in one line.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+    </mag-grid>
+  </mag-section>
+
+  <!-- ═══════════════════════════  AI ERA  ════════════════════════════════ -->
+
+  <mag-section data-reveal>
+    <mag-grid cols="2" gap="lg">
+      <mag-stack gap="md">
+        <mag-eyebrow tone="accent">Designed for the AI era</mag-eyebrow>
+        <mag-heading level="2">How agents actually write code.</mag-heading>
+        <mag-text lead>
+          LLMs write HTML attributes fluently.
+          <code>&lt;mag-button tone="primary" size="lg"&gt;</code>
+          beats a 20-line React component every time — fewer tokens,
+          fewer hallucinations, fewer broken imports.
+        </mag-text>
+      </mag-stack>
+
+      <mag-stack gap="md">
+        <mag-card>
+          <mag-stack gap="xs">
+            <mag-heading level="5">No context pollution</mag-heading>
+            <mag-text tone="muted" size="sm">
+              No <code>package.json</code> for an agent to misread.
+              No framework version matrix. The whole system fits in the
+              model's head.
+            </mag-text>
+          </mag-stack>
+        </mag-card>
+        <mag-card>
+          <mag-stack gap="xs">
+            <mag-heading level="5">Deterministic forever</mag-heading>
+            <mag-text tone="muted" size="sm">
+              Web standards don't break. Code an agent writes today still
+              runs in 2035 — no migration guide required.
+            </mag-text>
+          </mag-stack>
+        </mag-card>
+        <mag-card>
+          <mag-stack gap="xs">
+            <mag-heading level="5">Copy, paste, works</mag-heading>
+            <mag-text tone="muted" size="sm">
+              No "now run npm install." The page loads.
+              The agent's next step is a diff, not a build.
+            </mag-text>
+          </mag-stack>
+        </mag-card>
+      </mag-stack>
+    </mag-grid>
+  </mag-section>
+
+  <!-- ═══════════════════════════  COMPONENTS  ════════════════════════════ -->
+
+  <mag-section id="components" data-reveal>
+    <mag-stack gap="lg" align="center">
+      <mag-eyebrow tone="accent">Components</mag-eyebrow>
+      <mag-heading level="2">The kitchen sink.</mag-heading>
+      <mag-text lead>
+        Every primitive, live on this page. Inspect anything.
+        Nothing is faked or mocked.
+      </mag-text>
+    </mag-stack>
+
+    <mag-grid cols="2" gap="md">
+
+      <!-- Buttons -->
+      <mag-card pad="lg">
+        <mag-stack gap="md">
+          <mag-eyebrow>Buttons</mag-eyebrow>
+          <mag-row gap="sm" wrap>
+            <mag-button data-toast>Primary</mag-button>
+            <mag-button tone="secondary" data-toast>Secondary</mag-button>
+            <mag-button tone="ghost" data-toast>Ghost</mag-button>
+            <mag-button tone="danger" data-toast="Danger!">Danger</mag-button>
+          </mag-row>
+          <mag-row gap="sm" wrap>
+            <mag-button size="sm" data-toast>Small</mag-button>
+            <mag-button size="md" data-toast>Medium</mag-button>
+            <mag-button size="lg" data-toast>Large</mag-button>
+            <mag-button disabled>Disabled</mag-button>
+          </mag-row>
+        </mag-stack>
+      </mag-card>
+
+      <!-- Typography & badges -->
+      <mag-card pad="lg">
+        <mag-stack gap="md">
+          <mag-eyebrow>Typography</mag-eyebrow>
+          <mag-heading level="3">The quick brown fox</mag-heading>
+          <mag-text>
+            Body text stays readable at every size.
+            Line-height, tracking, and weight are tuned per scale.
+          </mag-text>
+          <mag-row gap="sm" wrap>
+            <mag-badge>Neutral</mag-badge>
+            <mag-badge tone="accent">Accent</mag-badge>
+            <mag-badge tone="success" dot>Live</mag-badge>
+            <mag-badge tone="danger" dot>Down</mag-badge>
+          </mag-row>
+        </mag-stack>
+      </mag-card>
+
+      <!-- Form -->
+      <mag-card pad="lg">
+        <mag-stack gap="md">
+          <mag-eyebrow>Form</mag-eyebrow>
+          <mag-field label="Email" hint="We'll never share it." id="demo-email-field">
+            <mag-input type="email" placeholder="you@example.com" id="demo-email"></mag-input>
+          </mag-field>
+          <mag-field label="Password" hint="At least 8 characters." id="demo-pass-field">
+            <mag-input type="password" value="short" id="demo-pass"></mag-input>
+          </mag-field>
+          <mag-row justify="end">
+            <mag-button tone="ghost" id="demo-cancel">Cancel</mag-button>
+            <mag-button id="demo-signin">Sign in</mag-button>
+          </mag-row>
+        </mag-stack>
+      </mag-card>
+
+      <!-- Dialog -->
+      <mag-card pad="lg">
+        <mag-stack gap="md">
+          <mag-eyebrow>Dialog</mag-eyebrow>
+          <mag-text tone="muted" size="sm">
+            Native <code>&lt;dialog&gt;</code> + <code>@starting-style</code>.
+            Esc closes. Backdrop click closes. Nothing shipped on top.
+          </mag-text>
+          <mag-row>
+            <mag-button data-dialog="demo-dialog">Open dialog</mag-button>
+          </mag-row>
+          <mag-dialog id="demo-dialog" title="Slartibartfast approves.">
+            This dialog is a native <code>&lt;dialog&gt;</code>, opened with
+            <code>showModal()</code>. The enter animation uses
+            <code>@starting-style</code>. No library. No portal. No focus-trap shim.
+            <mag-button slot="actions" tone="ghost" data-dialog-close>Cancel</mag-button>
+            <mag-button slot="actions" data-dialog-close data-toast="Confirmed.">Continue</mag-button>
+          </mag-dialog>
+        </mag-stack>
+      </mag-card>
+
+      <!-- Tabs -->
+      <mag-card pad="lg">
+        <mag-stack gap="md">
+          <mag-eyebrow>Tabs</mag-eyebrow>
+          <mag-text tone="muted" size="sm">
+            View Transition on active swap. Try clicking between.
+          </mag-text>
+          <mag-tabs value="overview">
+            <button data-tab="overview">Overview</button>
+            <button data-tab="install">Install</button>
+            <button data-tab="theme">Theme</button>
+            <div data-panel="overview">
+              <mag-text size="sm">
+                15 web components. One tokens file. One hero heading that
+                binary-searches its own font size.
+              </mag-text>
+            </div>
+            <div data-panel="install">
+<pre><span class="tk-mut">&lt;!-- head --&gt;</span>
+<span class="tk-tag">&lt;link</span> <span class="tk-key">rel</span>=<span class="tk-str">"stylesheet"</span> <span class="tk-key">href</span>=<span class="tk-str">"tokens.css"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-key">type</span>=<span class="tk-str">"module"</span> <span class="tk-key">src</span>=<span class="tk-str">"components/index.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+            </div>
+            <div data-panel="theme">
+              <mag-text size="sm">
+                Override any of the <code>--mag-*</code> custom properties.
+                Dark mode is automatic via <code>light-dark()</code>.
+                Use the toggle in the nav — that's a View Transition
+                circle-out animation.
+              </mag-text>
+            </div>
+          </mag-tabs>
+        </mag-stack>
+      </mag-card>
+
+      <!-- Menu -->
+      <mag-card pad="lg">
+        <mag-stack gap="md">
+          <mag-eyebrow>Menu</mag-eyebrow>
+          <mag-text tone="muted" size="sm">
+            Native Popover API + <code>@starting-style</code> +
+            <code>transition-behavior: allow-discrete</code>.
+            Open/close animations without a single line of JavaScript.
+          </mag-text>
+          <mag-row gap="sm" wrap>
+            <mag-menu label="Options">
+              <button>Edit</button>
+              <button>Duplicate</button>
+              <hr>
+              <button>Archive</button>
+              <button>Delete</button>
+            </mag-menu>
+            <mag-menu label="Filter">
+              <button>All</button>
+              <button>Active</button>
+              <button>Archived</button>
+            </mag-menu>
+          </mag-row>
+        </mag-stack>
+      </mag-card>
+
+      <!-- Canvas-measured fit -->
+      <mag-card pad="lg">
+        <mag-stack gap="md">
+          <mag-eyebrow>Pretext-flavored</mag-eyebrow>
+          <mag-fit max="4.5rem" min="1.5rem">Text that fits itself.</mag-fit>
+          <mag-text size="sm" tone="muted">
+            Canvas-measured. Binary-searches the largest font size that fits
+            its container. Zero DOM reflow during measurement — the browser
+            does it all off the main layout.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+
+      <!-- Accent surface -->
+      <mag-card pad="lg" tone="accent">
+        <mag-stack gap="md">
+          <mag-eyebrow tone="accent">Accent surface</mag-eyebrow>
+          <mag-heading level="3">Lagom. Just enough.</mag-heading>
+          <mag-text tone="muted">
+            Cards carry a tone. Sunken, ink, or a warm accent — use sparingly,
+            draw the eye. The rest stays calm.
+          </mag-text>
+        </mag-stack>
+      </mag-card>
+
+    </mag-grid>
+  </mag-section>
+
+  <!-- ═══════════════════════════  INSTALL  ═══════════════════════════════ -->
+
+  <mag-section id="install" data-reveal>
+    <mag-stack gap="lg" align="center">
+      <mag-eyebrow tone="accent">Install</mag-eyebrow>
+      <mag-heading level="2">Two lines. That's it.</mag-heading>
+    </mag-stack>
+
+    <mag-grid cols="2" gap="lg">
+      <mag-card pad="lg">
+        <mag-stack gap="md">
+          <mag-eyebrow>HTML</mag-eyebrow>
+<pre><span class="tk-mut">&lt;!-- in &lt;head&gt; --&gt;</span>
+<span class="tk-tag">&lt;link</span> <span class="tk-key">rel</span>=<span class="tk-str">"stylesheet"</span> <span class="tk-key">href</span>=<span class="tk-str">"tokens.css"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-key">type</span>=<span class="tk-str">"module"</span> <span class="tk-key">src</span>=<span class="tk-str">"components/index.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+        </mag-stack>
+      </mag-card>
+      <mag-card pad="lg">
+        <mag-stack gap="md">
+          <mag-eyebrow>Use</mag-eyebrow>
+<pre><span class="tk-tag">&lt;mag-hero</span> <span class="tk-key">bleed</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;mag-heading</span> <span class="tk-key">display</span><span class="tk-tag">&gt;</span>Hello.<span class="tk-tag">&lt;/mag-heading&gt;</span>
+  <span class="tk-tag">&lt;mag-button&gt;</span>Go<span class="tk-tag">&lt;/mag-button&gt;</span>
+<span class="tk-tag">&lt;/mag-hero&gt;</span></pre>
+        </mag-stack>
+      </mag-card>
+    </mag-grid>
+  </mag-section>
+
+  <!-- ═══════════════════════════  CTA  ══════════════════════════════════ -->
+
+  <mag-section tone="ink" data-reveal>
+    <mag-stack gap="md" align="center">
+      <mag-eyebrow>Ready?</mag-eyebrow>
+      <mag-heading level="2" display>Start building.</mag-heading>
+      <mag-text lead>
+        Clone the folder. Open <code>index.html</code>. That's the install.
+      </mag-text>
+      <mag-row gap="sm" justify="center" wrap>
+        <mag-button size="lg" data-dialog="install-dialog">Get Magrathea</mag-button>
+        <mag-button size="lg" tone="ghost" data-toast="Docs live in README.md.">Read the docs</mag-button>
+      </mag-row>
+    </mag-stack>
+  </mag-section>
+
+  <mag-dialog id="install-dialog" title="Install Magrathea">
+    Two lines in your <code>&lt;head&gt;</code>. That's the install.
+<pre><span class="tk-tag">&lt;link</span> <span class="tk-key">rel</span>=<span class="tk-str">"stylesheet"</span> <span class="tk-key">href</span>=<span class="tk-str">"tokens.css"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-key">type</span>=<span class="tk-str">"module"</span> <span class="tk-key">src</span>=<span class="tk-str">"components/index.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+    <mag-button slot="actions" tone="ghost" data-dialog-close>Close</mag-button>
+    <mag-button slot="actions" data-dialog-close data-toast="Copied.">Copy</mag-button>
+  </mag-dialog>
+
+  <footer>
+    <span>
+      Magrathea · Built from first principles
+      · <span class="tk-mut">So long, and thanks for all the fish.</span>
+    </span>
+    <span class="tk-mut">42</span>
+  </footer>
+
+  <div id="toast" aria-live="polite" aria-atomic="true"></div>
+
+  <script type="module">
+    /* One delegated listener wires the whole showcase. No framework. */
+
+    const toastRoot = document.getElementById("toast");
+    function toast(msg) {
+      const el = document.createElement("div");
+      el.className = "t";
+      el.textContent = msg;
+      toastRoot.appendChild(el);
+      setTimeout(() => {
+        el.classList.add("leaving");
+        el.addEventListener("transitionend", () => el.remove(), { once: true });
+      }, 2200);
+    }
+
+    document.addEventListener("click", (e) => {
+      // 1 — scroll-to helper
+      const scroll = e.target.closest("[data-scroll]");
+      if (scroll) {
+        document.querySelector(scroll.dataset.scroll)
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+
+      // 2 — dialog open/close
+      const open = e.target.closest("[data-dialog]");
+      if (open) {
+        document.getElementById(open.dataset.dialog)?.open();
+        // fall through so data-toast on same button also fires below
+      }
+      const closeBtn = e.target.closest("[data-dialog-close]");
+      if (closeBtn) {
+        closeBtn.closest("mag-dialog")?.close();
+        // fall through
+      }
+
+      // 3 — menu selection: update the menu's label, toast the choice
+      const item = e.target.closest("mag-menu button, mag-menu a");
+      if (item) {
+        const menu = item.closest("mag-menu");
+        const label = item.textContent.trim();
+        menu.setAttribute("label", label);
+        toast(`Selected: ${label}`);
+        return;
+      }
+
+      // 4 — form sign-in demo
+      if (e.target.closest("#demo-signin")) {
+        const field = document.getElementById("demo-pass-field");
+        const input = document.getElementById("demo-pass");
+        const val = input.value || "";
+        if (val.length < 8) {
+          field.setAttribute("error", "Must be at least 8 characters.");
+          toast("Password too short.");
+          input.focus();
+        } else {
+          field.removeAttribute("error");
+          toast("Signed in.");
+        }
+        return;
+      }
+      if (e.target.closest("#demo-cancel")) { toast("Cancelled."); return; }
+
+      // 5 — generic toast (primary/secondary/etc. demos + override via data-toast)
+      const t = e.target.closest("[data-toast]");
+      if (t) {
+        const msg = t.dataset.toast || `Clicked: ${t.textContent.trim()}`;
+        toast(msg);
+      }
+    });
+  </script>
+
+</body>
+</html>

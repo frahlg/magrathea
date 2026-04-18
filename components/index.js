@@ -1,0 +1,20 @@
+// Magrathea — import this one file to register all components.
+import "./stack.js";
+import "./row.js";
+import "./grid.js";
+import "./divider.js";
+import "./heading.js";
+import "./text.js";
+import "./eyebrow.js";
+import "./button.js";
+import "./input.js";
+import "./field.js";
+import "./badge.js";
+import "./card.js";
+import "./hero.js";
+import "./section.js";
+import "./fit.js";
+import "./dialog.js";
+import "./tabs.js";
+import "./toggle.js";
+import "./menu.js";
