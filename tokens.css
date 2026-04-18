@@ -73,18 +73,21 @@
   --mag-weight-bold:    700;
   --mag-weight-black:   800;
 
-  /* ── Spacing · 4px base, modular ────────────────────────────── */
+  /* ── Spacing · small values fixed, large values fluid.
+   * Fluid spacing makes the whole page breathe with the viewport:
+   * section padding, gap, rhythm shrink smoothly on narrow screens
+   * instead of snapping at media-query breakpoints. */
   --mag-space-0:  0;
   --mag-space-1:  0.25rem;
   --mag-space-2:  0.5rem;
   --mag-space-3:  0.75rem;
   --mag-space-4:  1rem;
-  --mag-space-5:  1.5rem;
-  --mag-space-6:  2rem;
-  --mag-space-7:  2.5rem;
-  --mag-space-8:  4rem;
-  --mag-space-9:  6rem;
-  --mag-space-10: 10rem;
+  --mag-space-5:  clamp(1rem,    0.75rem + 1vw,   1.5rem);   /* 16→24 */
+  --mag-space-6:  clamp(1.25rem, 0.75rem + 1.5vw, 2rem);     /* 20→32 */
+  --mag-space-7:  clamp(1.5rem,  0.75rem + 2vw,   2.5rem);   /* 24→40 */
+  --mag-space-8:  clamp(2rem,    0.8rem + 3.5vw,  4rem);     /* 32→64 */
+  --mag-space-9:  clamp(2.75rem, 0.75rem + 5vw,   6rem);     /* 44→96 */
+  --mag-space-10: clamp(4rem,    1rem   + 8vw,   10rem);     /* 64→160 */
 
   /* ── Radii ──────────────────────────────────────────────────── */
   --mag-radius-xs:   6px;
